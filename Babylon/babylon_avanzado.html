@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ejemplo de Escena en Babylon.js</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <style>
+        canvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+        var engine = new BABYLON.Engine(canvas, true);
+        var scene = new BABYLON.Scene(engine);
+
+        var camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 5, -10), scene);
+        camera.setTarget(BABYLON.Vector3.Zero());
+        camera.attachControl(canvas, true);
+
+        var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+
+        BABYLON.SceneLoader.ImportMesh("", "assets/", "cottage_obj.obj", scene, function (meshes) {
+            // Centrar el objeto en la escena
+            meshes[0].position = new BABYLON.Vector3(0, 0, 0);
+        });
+
+        BABYLON.SceneLoader.ImportMesh("", "assets/", "house.glb", scene, function (meshes) {
+            // Centrar el objeto en la escena
+            meshes[0].position = new BABYLON.Vector3(0, 0, 0);
+        });
+
+        var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, scene);
+        var groundMaterial = new BABYLON.StandardMaterial("groundMat", scene);
+        groundMaterial.diffuseTexture = new BABYLON.Texture("assets/textura.jpg", scene);
+        ground.material = groundMaterial;
+
+        var sound = new BABYLON.Sound("Sound", "assets/ambiental.mp3", scene, null, { loop: true, autoplay: true });
+
+        scene.executeWhenReady(function () {
+            engine.runRenderLoop(function () {
+                scene.render();
+            });
+        });
+
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>
